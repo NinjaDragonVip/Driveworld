@@ -1,0 +1,22 @@
+-- โหลดสคริปต์จาก URL
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Marco8642/science/main/drive%20world"))()
+
+-- จำกัด FPS ไว้ที่ 60 เพื่อให้ระบบไม่ต้องทำงานหนักเกินไป
+setfpscap(60)
+
+-- ปิดเงาในเกม
+game:GetService("Lighting").GlobalShadows = false
+
+-- ลบเอฟเฟกต์หมอก
+game:GetService("Lighting").FogEnd = 9e9
+
+-- ปรับแสงให้น้อยที่สุด
+game:GetService("Lighting").Brightness = 0
+
+-- ลดการใช้ทรัพยากรด้วยการเปลี่ยนวัสดุและปิดการสะท้อน
+for _, v in pairs(workspace:GetDescendants()) do
+    if v:IsA("BasePart") then
+        v.Material = Enum.Material.SmoothPlastic -- เปลี่ยนวัสดุให้เรียบที่สุดเพื่อลดการคำนวณกราฟิก
+        v.Reflectance = 0 -- ปิดการสะท้อน
+    end
+end
