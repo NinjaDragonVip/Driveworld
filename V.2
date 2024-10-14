@@ -1,0 +1,62 @@
+-- โหลดสคริปต์จาก URL
+local success, result = pcall(function()
+    return game:HttpGet("https://raw.githubusercontent.com/Marco8642/science/main/drive%20world")
+end)
+
+if success then
+    loadstring(result)()
+else
+    warn("Error loading script: ", result)
+end
+
+-- จำกัด FPS ไว้ที่ 15 เพื่อให้ระบบไม่ต้องทำงานหนักเกินไป
+pcall(function() setfpscap(15) end)
+
+-- ปิดเงาในเกมเพื่อประหยัดทรัพยากร
+local lightingService = game:GetService("Lighting")
+if lightingService then
+    lightingService.GlobalShadows = false
+    lightingService.FogEnd = 9e9 -- ลบหมอก
+    lightingService.Brightness = 0 -- ปรับแสงให้น้อยที่สุด
+end
+
+-- ลดการใช้ทรัพยากรด้วยการเปลี่ยนวัสดุและปิดการสะท้อน
+local function optimizeWorkspace()
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("BasePart") then
+            v.Material = Enum.Material.SmoothPlastic -- เปลี่ยนวัสดุให้เรียบที่สุดเพื่อลดการคำนวณกราฟิก
+            v.Reflectance = 0 -- ปิดการสะท้อน
+        end
+    end
+end
+
+-- ใช้การจัดการการประมวลผลเป็นชุด (Batch Processing)
+pcall(function()
+    local batchSize = 100 -- จำนวนวัตถุที่อัปเดตต่อรอบ
+    local descendants = workspace:GetDescendants()
+    for i = 1, #descendants, batchSize do
+        task.wait(0.1) -- ให้เวลาประมวลผลอื่นๆ ด้วย
+        for j = i, math.min(i + batchSize - 1, #descendants) do
+            local v = descendants[j]
+            if v:IsA("BasePart") then
+                v.Material = Enum.Material.SmoothPlastic
+                v.Reflectance = 0
+            end
+        end
+    end
+end)
+
+-- ใช้การทำงานที่เบาเพื่อลดการใช้ RAM และป้องกันแอปจากการแคชหนักเกินไป
+pcall(function()
+    game:GetService("ContentProvider"):SetBaseUrl("https://www.roblox.com/") -- ตั้งค่า URL เพื่อไม่ให้ใช้ทรัพยากรเกินไป
+    -- ปิดการทำงานที่ไม่จำเป็นอื่นๆ
+    for _, service in pairs({"Debris", "PathfindingService", "NetworkClient", "SoundService"}) do
+        if game:GetService(service) then
+            game:GetService(service):SetAsync("Enabled", false)
+        end
+    end
+end)
+
+-- ปิดการทำงานบางอย่างเพื่อใช้ RAM น้อยลง
+game:GetService("Players").LocalPlayer.MaximumSimulationRadius = 50
+game:GetService("Players").LocalPlayer.ReplicationFocus = workspace
