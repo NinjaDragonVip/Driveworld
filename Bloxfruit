@@ -1,0 +1,153 @@
+-- ============================================
+-- QUARTYZ BLOX FRUITS SCRIPT WITH MAX FPS BOOST, PING REDUCE, LOCK FPS, MAX SMOOTH
+-- EXTREME LOW GRAPHICS MODE: REMOVE ALL TEXTURES, COLORS, MAKE CRAPPY AS POSSIBLE FOR ULTIMATE SMOOTHNESS
+-- ============================================
+
+-- Original Config
+getgenv().Mode = "OneClick"
+getgenv().Setting = {
+    ["Team"] = "Marines", -- Options "Pirates", "Marines"
+    ["FucusOnLevel"] = true,  -- Note: Typo? Maybe "FocusOnLevel"
+    ["Fruits"] = {  -- setting for fruits u want
+        ["Primary"] = { -- if current fruit is not in this list, eat/buy
+            "Dragon-Dragon",
+            -- u can configs add mores/remove and must end with , (comma symbol)
+        },
+        ["Normal"] = { -- it just a normal fruit list
+            "Dragon-Dragon",
+            -- u can configs add mores/remove and must end with , (comma symbol)
+        }
+        -- run this for get all fruit name `local t={};for _,v in pairs(game.ReplicatedStorage.Remotes.CommF_:InvokeServer("GetFruits"))do table.insert(t,`"{v.Name}"`)end;setclipboard(table.concat(t, "\n"))`
+    },
+    ["IdleCheck"] = 150, -- every (x) seconds if not moving rejoin
+};
+
+-- ============================================
+-- EXTREME FPS Boost, Ping Reduce, Lock FPS, Max Smooth + Crappy Graphics Mode
+-- REMOVE ALL TEXTURES, COLORS, MAKE UGLY/CRAPPY FOR MAX PERFORMANCE
+-- ============================================
+
+-- Lock FPS for stable smoothness (change if needed, lower for more crappy but smoother on low-end)
+getgenv().FPSCap = 10
+if setfpscap then
+    setfpscap(getgenv().FPSCap)
+    print("FPS Locked to " .. getgenv().FPSCap)
+else
+    warn("Your executor does not support setfpscap")
+end
+
+-- Set lowest possible graphics quality for crappy look and max FPS
+settings().Rendering.QualityLevel = Enum.QualityLevel.Level01  -- Absolute lowest quality (crappiest)
+settings().Rendering.MeshPartDetailLevel = Enum.MeshPartDetailLevel.Level01  -- Lowest mesh detail
+settings().Rendering.EagerBulkExecution = true  -- Optimize rendering speed
+settings().Rendering.EnableFRM = false  -- Disable Fidelity Rendering Mode if exists
+settings().Rendering.AntiAliasing = false  -- Disable anti-aliasing for crappy edges but faster
+
+-- Extreme lighting disable for no colors/shadows (make everything flat/crappy)
+local Lighting = game:GetService("Lighting")
+Lighting.Brightness = 1  -- Neutral brightness
+Lighting.ClockTime = 12  -- Midday, no dynamic lighting
+Lighting.FogEnd = math.huge  -- No fog for max visibility but crappy
+Lighting.GlobalShadows = false
+Lighting.Ambient = Color3.fromRGB(128, 128, 128)  -- Gray ambient to remove colors (grayscale-ish)
+Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+Lighting.ShadowSoftness = 0
+sethiddenproperty(Lighting, "Technology", Enum.Technology.Compatibility)  -- Oldest/crappiest rendering tech
+
+-- Remove ALL textures, colors, surfaces: Set to plain plastic, no reflectance, grayscale colors
+for _, v in pairs(workspace:GetDescendants()) do
+    if v:IsA("BasePart") or v:IsA("UnionOperation") or v:IsA("MeshPart") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
+        v.Material = Enum.Material.Plastic  -- Plain plastic (no texture)
+        v.TextureID = ""  -- Remove any texture ID
+        v.Color = Color3.fromRGB(128, 128, 128)  -- Grayscale color to "remove colors" (make ugly gray)
+        v.Reflectance = 0
+        v.Transparency = 0  -- Keep solid but ugly
+        v.CastShadow = false  -- No shadows for speed
+        if v:FindFirstChildOfClass("SurfaceAppearance") then
+            v:FindFirstChildOfClass("SurfaceAppearance"):Destroy()  -- Remove surface appearances
+        end
+        if v:FindFirstChildOfClass("Texture") then
+            v:FindFirstChildOfClass("Texture"):Destroy()  -- Destroy textures
+        end
+        if v:FindFirstChildOfClass("Decal") then
+            v:FindFirstChildOfClass("Decal"):Destroy()  -- Destroy decals
+        end
+    elseif v:IsA("Decal") or v:IsA("Texture") or v:IsA("SurfaceGui") then
+        v:Destroy()  -- Completely remove
+    elseif v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Beam") or v:IsA("Attachment") then
+        v.Enabled = false
+        v:Destroy()  -- Kill all effects for max speed
+    elseif v:IsA("Explosion") then
+        v.BlastPressure = 0
+        v.BlastRadius = 0
+    elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") or v:IsA("Sparkles") or v:IsA("PointLight") or v:IsA("SurfaceLight") then
+        v.Enabled = false
+        v:Destroy()
+    end
+end
+
+-- Dynamic listener to remove new stuff instantly (keep game crappy and smooth)
+workspace.DescendantAdded:Connect(function(v)
+    if v:IsA("BasePart") or v:IsA("UnionOperation") or v:IsA("MeshPart") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
+        v.Material = Enum.Material.Plastic
+        v.TextureID = ""
+        v.Color = Color3.fromRGB(128, 128, 128)  -- Gray everything
+        v.Reflectance = 0
+        v.CastShadow = false
+        if v:FindFirstChildOfClass("SurfaceAppearance") then
+            v:FindFirstChildOfClass("SurfaceAppearance"):Destroy()
+        end
+        if v:FindFirstChildOfClass("Texture") then
+            v:FindFirstChildOfClass("Texture"):Destroy()
+        end
+        if v:FindFirstChildOfClass("Decal") then
+            v:FindFirstChildOfClass("Decal"):Destroy()
+        end
+    elseif v:IsA("Decal") or v:IsA("Texture") or v:IsA("SurfaceGui") then
+        v:Destroy()
+    elseif v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Beam") or v:IsA("Attachment") then
+        v.Enabled = false
+        v:Destroy()
+    elseif v:IsA("Explosion") then
+        v.BlastPressure = 0
+        v.BlastRadius = 0
+    elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") or v:IsA("Sparkles") or v:IsA("PointLight") or v:IsA("SurfaceLight") then
+        v.Enabled = false
+        v:Destroy()
+    end
+end)
+
+-- Infinite simulation radius for no lag in big worlds
+if sethiddenproperty then
+    sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+    sethiddenproperty(game.Players.LocalPlayer, "MaximumSimulationRadius", math.huge)
+    print("Infinite Simulation Radius for max smoothness")
+else
+    warn("Executor lacks sethiddenproperty support")
+end
+
+-- Disable all GUI effects if possible (for HUD, etc.)
+for _, gui in pairs(game.Players.LocalPlayer.PlayerGui:GetDescendants()) do
+    if gui:IsA("ImageLabel") or gui:IsA("ImageButton") then
+        gui.Image = ""  -- Remove images in GUI
+        gui.BackgroundColor3 = Color3.fromRGB(128, 128, 128)  -- Gray GUI
+    end
+end
+
+-- Optional: Re-apply FPS lock every second
+spawn(function()
+    while true do
+        wait(1)
+        if setfpscap then
+            setfpscap(getgenv().FPSCap)
+        end
+    end
+end)
+
+-- Print success
+print("Extreme Crappy Mode Applied: All Textures/Colors Removed, Max Ugly for Ultimate Smoothness!")
+
+-- ============================================
+-- Load the Main Hub Script
+-- ============================================
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/
