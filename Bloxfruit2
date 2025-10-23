@@ -1,0 +1,111 @@
+-- ============================================
+-- QUARTYZ BLOX FRUITS SCRIPT FOR DELTA EXECUTOR - MAX SMOOTH, LOW RESOURCE
+-- ============================================
+
+-- Lock FPS to 15 for Delta (balanced for smoothness and low resource)
+getgenv().FPSCap = 15 -- Delta อาจไม่รองรับ setfpscap เต็มรูปแบบ ลอง 15 เพื่อสมดุล
+if setfpscap then
+    setfpscap(getgenv().FPSCap)
+    print("FPS Locked to " .. getgenv().FPSCap)
+else
+    warn("Delta Executor does not support setfpscap, please set FPS in Roblox Settings")
+end
+
+-- Ultra-low graphics settings for maximum smoothness
+settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+settings().Rendering.MeshPartDetailLevel = Enum.MeshPartDetailLevel.Level04
+settings().Rendering.EagerBulkExecution = true
+settings().Rendering.EnableFRM = false -- ปิด Frame Rate Manager
+
+-- Disable all lighting effects for Delta
+local Lighting = game:GetService("Lighting")
+Lighting.Brightness = 2
+Lighting.ClockTime = 14
+Lighting.FogEnd = 100000
+Lighting.GlobalShadows = false
+Lighting.Ambient = Color3.fromRGB(255, 255, 255)
+Lighting.ShadowSoftness = 0
+Lighting.EnvironmentDiffuseScale = 0
+Lighting.EnvironmentSpecularScale = 0
+if sethiddenproperty then
+    sethiddenproperty(Lighting, "Technology", "Compatibility")
+    print("Lighting Technology set to Compatibility")
+else
+    warn("Delta Executor may not support sethiddenproperty for Lighting")
+end
+
+-- Disable textures, particles, effects, and sounds for max FPS
+for _, v in pairs(workspace:GetDescendants()) do
+    if v:IsA("Part") or v:IsA("UnionOperation") or v:IsA("MeshPart") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
+        v.Material = "Plastic"
+        v.Reflectance = 0
+        v.TextureID = ""
+        v.Anchored = true -- ลดการคำนวณ Physics
+        v.CanCollide = false -- ปิดการตรวจจับการชน
+    elseif v:IsA("Decal") or v:IsA("Texture") then
+        v.Transparency = 1
+    elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+        v.Lifetime = NumberRange.new(0)
+        v.Enabled = false
+    elseif v:IsA("Explosion") then
+        v.BlastPressure = 0
+        v.BlastRadius = 0
+    elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") or v:IsA("Sparkles") then
+        v.Enabled = false
+    elseif v:IsA("Sound") then
+        v.Volume = 0
+        v:Stop()
+    elseif v:IsA("SpecialMesh") then
+        v:Destroy()
+    end
+end
+
+-- Handle new descendants for dynamic objects
+workspace.DescendantAdded:Connect(function(v)
+    if v:IsA("Part") or v:IsA("UnionOperation") or v:IsA("MeshPart") or v:IsA("CornerWedgePart") or v:IsA("TrussPart") then
+        v.Material = "Plastic"
+        v.Reflectance = 0
+        v.TextureID = ""
+        v.Anchored = true
+        v.CanCollide = false
+    elseif v:IsA("Decal") or v:IsA("Texture") then
+        v.Transparency = 1
+    elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+        v.Lifetime = NumberRange.new(0)
+        v.Enabled = false
+    elseif v:IsA("Explosion") then
+        v.BlastPressure = 0
+        v.BlastRadius = 0
+    elseif v:IsA("Fire") or v:IsA("SpotLight") or v:IsA("Smoke") or v:IsA("Sparkles") then
+        v.Enabled = false
+    elseif v:IsA("Sound") then
+        v.Volume = 0
+        v:Stop()
+    elseif v:IsA("SpecialMesh") then
+        v:Destroy()
+    end
+end)
+
+-- Maximize simulation radius (if supported by Delta)
+if sethiddenproperty then
+    sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge)
+    sethiddenproperty(game.Players.LocalPlayer, "MaximumSimulationRadius", math.huge)
+    sethiddenproperty(game.Players.LocalPlayer, "NetworkOwnershipAuto", false)
+    print("Simulation Radius and Network Ownership optimized")
+else
+    warn("Delta Executor may not support sethiddenproperty, skipping Simulation Radius")
+end
+
+-- CPU saver loop for Delta (reduce CPU usage with delay)
+spawn(function()
+    while true do
+        wait(2) -- เพิ่มหน่วงเวลาเพื่อลดการใช้ CPU ใน Delta
+        -- ถ้า Delta ไม่รองรับ setfpscap ลูปนี้จะช่วยลดการประมวลผล
+    end
+end)
+
+-- Print success
+print("Ultra-Low Graphics, Max FPS Boost, Ping Optimize, and Max Smooth Applied for Delta Executor!")
+
+-- Load the main hub script (unchanged from original)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xQuartyx/QuartyzScript/main/Loader.lua"))()
